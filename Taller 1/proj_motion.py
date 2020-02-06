@@ -10,23 +10,26 @@ class Projectile:
     def __init__(self, x0, y0, v0, alpha0):
         # projectile initial position and velocity
         self.x, self.y = x0, y0
-        self.vx = v0 * np.cos(alpha0)
-        self.vy = v0 * np.sin(alpha0)
+        self.vx0 = v0 * np.cos(alpha0)
+        self.vy0 = v0 * np.sin(alpha0)
         
         # time interval to be simulated
-        self.t = ...
+        self.t =np.linespace(0,t_max)
         # esto deberia ser un linspace?
 
     def kinematics(self, ax, ay):
-        # kinematic equations: position and velocity
-        self.x += ...
-        self.y += ...
-        
-        self.vx += ...
-        self.vy += ...
+        # kinematic equations: position and velocity    
+        # line points se    
+        # line points se
+        self.x += self.x + self.vx0 * self.t
+        self.y += self.y + self.vy0 * self.t - 5. * grav_ *(self.t **2)
+         
+        self.vx += self.vx0
+        self.vy += self.voy - grav_ * self.t
     
     def get_trajectory(self):
         # returns values of x(t) and y(t)
+        
         return self.x, self.y
 
 
@@ -46,7 +49,11 @@ class Animator:
     
     def set_animation(self):
         # plot setup: axis, labels, title, grid, etc.
-                           
+        
+        ax = plt.axes(autoscale_on=False, xlim=(0, x_max), ylim=(0, y_max)) # use los 
+        #limites que le estoy pasando
+        ax.set(xlabel='x [a.u.]', ylabel='y [a.u.]', title='Projectile motion')
+        ax.grid()
         # line points setup, time template, points on top of axes
 
     def init(self):
@@ -70,6 +77,7 @@ class Animator:
 # physical constants (in arbitrary units)
 grav_ = 1
 drag_ = .0 * grav_
+t_max = 10
 params = [val for val in range(15, 91, 15)]
 
 # initial position and velocity; acceleration
@@ -107,6 +115,6 @@ framer.set_animation()
 # carry out animation (default parameters)
 framer.run_animation(inval=1000*Projectile.sim_time/Projectile.time_slices)
 
-
+#https://codingcompetitions.withgoogle.com/
 
 
