@@ -29,6 +29,7 @@ class Projectile:
     
     def get_trajectory(self):
         # returns values of x(t) and y(t)
+        kinematics(0,0)
         
         return self.x, self.y
 
@@ -50,7 +51,7 @@ class Animator:
     def set_animation(self):
         # plot setup: axis, labels, title, grid, etc.
         
-        ax = plt.axes(autoscale_on=False, xlim=(0, x_max), ylim=(0, y_max)) # use los 
+        #ax = plt.axes(autoscale_on=False, xlim=(0, x_max), ylim=(0, y_max)) # use los 
         #limites que le estoy pasando
         ax.set(xlabel='x [a.u.]', ylabel='y [a.u.]', title='Projectile motion')
         ax.grid()
@@ -58,9 +59,15 @@ class Animator:
 
     def init(self):
         # function used to draw a clear frame
-    
+        self.fig, self.ax = plt.subplot()
+        ax.set_xlim=(0,length(self.artists.t))
+        ax.set_ylim=(0,)
+        
+        ax.set_ylim=(0,length(objs.t))
     def animate(self, idx):
         # function to call at each frame
+        x_data,y_data = self.atists.get_trajectory()
+        self.line = 
         return self.line, self.point, self.time_text
     
     
