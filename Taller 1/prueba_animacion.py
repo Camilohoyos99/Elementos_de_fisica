@@ -52,9 +52,75 @@ class Projectile:
 
 
 
+class Animator:
+    # choose your favorite colors!
+    cls = ['green', 'red', 'blue', 'cyan', 'magenta', 'black']
+    
+    def __init__(self, objs):
+        # objects to be animated and its total number
+        self.artists = objs
+        self.number = len(self.artists)
+        
+        # instance variables to None; properly set in set_animation
+        self.fig = self.ax = self.line = self.point = None
+        self.time_template = self.time_text = None
+        self.xdata = self.ydata = None
+    
+    def set_animation(self):
+        # plot setup: axis, labels, title, grid, etc.
+        
+        #ax = plt.axes(autoscale_on=False, xlim=(0, x_max), ylim=(0, y_max)) # use los 
+        #limites que le estoy pasando
+        self.fig, self.ax = plt.subplots()
+        self.line, = self.ax.plot([], [], lw=2)
+        
+        self.xdata, self.ydata = [], []
+
+        self.ax.set(xlabel='x [a.u.]', ylabel='y [a.u.]', title='Projectile motion')
+        self.ax.grid()
+        # line points setup, time template, points on top of axes
+
+    def init(self):
+        # function used to draw a clear frame
+        self.ax.set_ylim(0,20)
+        self.ax.set_xlim(0, 10)
+        del self.xdata[:]
+        del self.ydata[:]
+        self.line.set_data(self.xdata, self.ydata)
+            
+        return self.line,
+    def animate(self, idx):
+        # function to call at each frame
+        t, y = idx
+        self.xdata.append(t)
+        self.ydata.append(y)
+        xmin, xmax = ax.get_xlim()
+    
+        if t >= xmax:
+            self.ax.set_xlim(xmin, 2*xmax)
+            self.ax.figure.canvas.draw()
+            self.line.set_data(self.xdata, self.ydata)
+
+        return self.line,
+       # return self.line, self.point, self.time_text
+    
+    
+    def run_animation(self, inval=10, rep=True):
+        # set up to perform animation
+        ani = animation.FuncAnimation(self.fig, self.animate,
+                                      range(len(self.artists[0].y)),
+                                      repeat=rep, interval=inval,
+                                      init_func=self.init)
+     
+        
+        ani.save("prueba.gif")
+        plt.show()
 
 
-
+"""ani = animation.FuncAnimation(self.fig, self.animate,
+                                      range(len(self.artists.y)-1),
+                                      repeat=rep, interval=inval,
+                                      init_func=self.init)"""
 # physical constants (in arbitrary units)
 grav_ = 1
 drag_ = .0 * grav_
@@ -77,20 +143,13 @@ print("time slices =", Projectile.time_slices)
 
 
 # create all projectiles to animate
-balls = Projectile(x0, y0, v0, alpha0[2])
+balls = [Projectile(x0, y0, v0, val) for val in alpha0]
 
 # generate their respective trajectories
-balls.kinematics(ax, ay) 
-
-x,y = balls.get_trajectory()
-
-
-plt.plot(x,y)
-
+[ball.kinematics(ax, ay) for ball in balls]
 
 # print some relevant values to check correcteness
-#print(balls.get_maxes()) 
-#
+#[print(ball.get_maxes()) for ball in balls]
 #[print(ball.get_trajectory()) for ball in balls]
 
 
@@ -98,7 +157,11 @@ plt.plot(x,y)
 framer = Animator(balls)
 
 # set up animation
-#framer.set_animation()
+framer.set_animation()
 
 # carry out animation (default parameters)
-#framer.run_animation(inval=1000*Projectile.sim_time/Projectile.time_slices)
+framer.run_animation(inval=1000*Projectile.sim_time/Projectile.time_slices)
+
+#https://codingcompetitions.withgoogle.com/
+
+
