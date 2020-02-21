@@ -35,13 +35,17 @@ class Projectile:
          
         self.vx0 += self.vx0
         self.vy0 += self.vy0 - grav_ * self.t
+        
+        self.y = self.y[self.y>=0]
+     
+        self.x = self.x[:len(self.y)]
     
     def get_trajectory(self):
         # returns values of x(t) and y(t)
-        self.y = self.y[self.y>=0]
+        #self.y = self.y[self.y>=0]
      
         #preguntar que hacer para llegar al 0, si forzarlo o que putas.
-        self.x = self.x[:len(self.y)]
+        #self.x = self.x[:len(self.y)]
         
         return self.x, self.y
     
@@ -80,41 +84,56 @@ class Animator:
         self.ax.grid()
         # line points setup, time template, points on top of axes
 
-    def init(self):
+    def init(self,idx):
         # function used to draw a clear frame
-        self.ax.set_ylim(0,20)
-        self.ax.set_xlim(0, 10)
+        self.ax.set_ylim(0,max(self.artists[idx].y))
+        self.ax.set_xlim(0,max(self.artists[idx].y))
         del self.xdata[:]
         del self.ydata[:]
         self.line.set_data(self.xdata, self.ydata)
             
         return self.line,
+    
     def animate(self, idx):
         # function to call at each frame
-        t, y = idx
+        """t, y = idx
         self.xdata.append(t)
         self.ydata.append(y)
         xmin, xmax = ax.get_xlim()
-    
+        print("animate")
         if t >= xmax:
             self.ax.set_xlim(xmin, 2*xmax)
             self.ax.figure.canvas.draw()
-            self.line.set_data(self.xdata, self.ydata)
-
+            self.line.set_data(self.xdata, self.ydata)"""
+        
+       # print(type(self.artists))
+            
+        self.xdata=self.artists[idx].x
+        
+        self.ydata=self.artists[idx].y
+        
+        self.ax.set_xlim(0,max(self.xdata))
+        
+        self.ax.set_ylim(0,max(self.ydata))
+        
+        self.line.set_data(self.xdata,self.ydata)
+        print("hola")
         return self.line,
        # return self.line, self.point, self.time_text
     
     
     def run_animation(self, inval=10, rep=True):
         # set up to perform animation
-        ani = animation.FuncAnimation(self.fig, self.animate,
-                                      range(len(self.artists[0].y)),
+        for idx in range (self.number):
+            
+            ani = animation.FuncAnimation(self.fig, self.animate(idx),
+                                      range(len(self.artists[idx].y)),
                                       repeat=rep, interval=inval,
-                                      init_func=self.init)
-     
-        
-        ani.save("prueba.gif")
-        plt.show()
+                                      init_func=self.init(idx))
+
+            name = "prueba" + str(idx)+".gif"
+            ani.save(name)
+        #plt.show()
 
 
 """ani = animation.FuncAnimation(self.fig, self.animate,
@@ -152,15 +171,17 @@ balls = [Projectile(x0, y0, v0, val) for val in alpha0]
 #[print(ball.get_maxes()) for ball in balls]
 #[print(ball.get_trajectory()) for ball in balls]
 
-
 # create animator handle object for animation
 framer = Animator(balls)
 
 # set up animation
 framer.set_animation()
 
+
 # carry out animation (default parameters)
-framer.run_animation(inval=1000*Projectile.sim_time/Projectile.time_slices)
+#framer.run_animation(1000*Projectile.sim_time/Projectile.time_slices)
+
+framer.run_animation()
 
 #https://codingcompetitions.withgoogle.com/
 
